@@ -18,12 +18,12 @@
 				<view class="room">{{item.room}}</view>
 				<view class="doctor">{{item.doctor}}</view>
 				<view class="seeing">
-					<text class="pr-15">{{item.seeing.number}}</text>
-					<text class="pl-15">{{item.seeing.name}}</text>
+					<text class="pr-15">{{item.number}}</text>
+					<text class="pl-15">{{item.name}}</text>
 				</view>
 				<view class="seeing">
-					<text class="pr-15">{{item.wait.number}}</text>
-					<text class="pl-15">{{item.wait.name}}</text>
+					<text class="pr-15">{{item.nextNo}}</text>
+					<text class="pl-15">{{item.nextName}}</text>
 				</view>
 			</view>
 		</view>
@@ -47,12 +47,15 @@
 				</view>
 			</view>
 		</uni-popup>
+		<!-- <view>{{test}}</view> -->
 	</view>
 </template>
 
 <script>
 import uniPopup from '@/components/uni-popup/uni-popup.vue'
-// var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS')
+// #ifdef APP-PLUS
+	var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS');
+// #endif
 export default {
 	data() {
 		return {
@@ -66,18 +69,16 @@ export default {
 			title:'内科',
 			weekday: [],
 			data:[
-				{
-					room:'诊室1',
-					doctor:'张医生',
-					wait:{
-						number:'A1002',
-						name:'张无忌',
-					},
-					seeing:{
-						number:'J1003',
-						name:'赵敏',
-					} 
-				},
+				// {
+				// 	room:'科室1',
+				// 	remark:'速来',
+				// 	doctor:'张医生',
+				// 	number:"K101",
+				// 	name:'张*鑫',
+				// 	status:'正在检查',
+				// 	nextNo:'K102',
+				// 	nextName:'吴先杰',
+				// },
 			
 			],
 			cliniqueCode:'',
@@ -86,11 +87,23 @@ export default {
 			seqNumber:'',
 			test:'测试',
 			testNubmer:0,
+			voiceData:[],
+			voiceDataInit:[],
+			voicePlayNumber:0,
+			differenceHour:8,
 		};
 	},
 	onLoad() {
+		uni.getSystemInfo({
+		    success: (res) => {
+				if(res.system=='4.2.2'){
+					this.differenceHour = 8;
+				}
+		    }
+		});
 		this.iType = uni.getStorageSync('iType')||'';
 		let date = new Date();
+		this.test = date;
 		this.weekday = new Array(7);
 		this.weekday[0] = '星期日';
 		this.weekday[1] = '星期一';
@@ -113,10 +126,10 @@ export default {
 	methods: {
 		//选择页面
 		navTo(){
+			uni.setStorageSync('pageSetBoolean',false);
 			uni.redirectTo({
 				url: '../index/index',
 				success: res => {
-					uni.setStorageSync('pageSetBoolean',false);
 				},
 				fail: () => {},
 				complete: () => {}
@@ -125,13 +138,14 @@ export default {
 		//当前时间
 		newDate() {
 			let date = new Date();
+			date.setHours(date.getHours() + this.differenceHour);
 			this.dateText = {
 				year: date.getFullYear(),
 				month: date.getMonth() + 1,
 				date: date.getDate(),
 				day: this.weekday[date.getDay()],
 				time: date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-			};
+			};	
 		},
 		// 打开设置
 		open(){
@@ -170,64 +184,89 @@ export default {
 				return false;
 			}
 			// 测试使用
-			let data = {room:'诊室1',doctor:'张医生',wait:{number:'A100',name:'张无忌',},seeing:{number:'J1003',name:'赵敏',}};
-			data.wait.number = data.wait.number + this.testNubmer++
-			if(!data.doctor){
+			// let datas = [{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"23","current_call_time":null,"am_pm":"下午","patient_id":"0000004818","patient_name":"林先进","status":"叫号","seq_number":"51909","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"51927","next_name":"黄玉栋"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"21","current_call_time":null,"am_pm":"下午","patient_id":"0000015241","patient_name":"黄玉栋","status":"排队","seq_number":"51927","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52065","next_name":"马仲君"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"6","current_call_time":null,"am_pm":"下午","patient_id":"0000002364","patient_name":"马仲君","status":"作废","seq_number":"52065","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52072","next_name":"张木铨"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"4","current_call_time":null,"am_pm":"下午","patient_id":"0000018489","patient_name":"张木铨","status":"排队","seq_number":"52072","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52097","next_name":"王天赐"}]
+			// datas[0].doctor_seq = datas[0].doctor_seq + this.testNubmer++
+			// datas[1].doctor_seq = datas[1].doctor_seq + this.testNubmer++
+			
+			uni.request({
+			    url: 'http://172.31.12.188:8080/Queue/Get_disp_Queue', 
+				data:{
+					dept_name :this.iType ,
+				},
+				timeout:3000,
+			    success: (res) => {
+					let datas = res.data.Data;
+					let dataMaps = [];
+					let voiceDataInit = [];
+					if(datas.length>0){
+						if(datas[0].queue_name && this.title!= datas[0].queue_name){
+							this.title = datas[0].queue_name;
+						}
+					}
+					datas.forEach((data,index) =>{
+						let name =data.patient_name?this.hideName(data.patient_name):'';
+						let nextName =data.next_name?this.hideName(data.next_name):'';
+						let dataMap = {
+							room:data.clinique_code||'',
+							remark:'',
+							doctor:data.doctor,
+							number:data.doctor_seq,
+							name:name,
+							status:data.status,
+							nextNo:data.next_no,
+							nextName:nextName,
+						}
+						dataMaps = dataMaps.concat(dataMap);
+					
+						if(name && data.status == '呼叫'){
+							let number = this.chineseNumeral(dataMap.number+'');
+							let speakText = `请,${number}号,${data.patient_name},到,${dataMap.room},就诊`;
+							if(this.data.length==0){
+								this.voiceData.push(speakText);
+								this.voiceDataInit.push(speakText);
+							}else{
+								voiceDataInit = voiceDataInit.concat(speakText);
+							}
+						}
+					})
+					if(voiceDataInit.length>0){
+						this.findDifferentElements(voiceDataInit,this.voiceDataInit)
+						this.voiceDataInit = voiceDataInit;
+					}
+					this.data = dataMaps;
+					if(this.voiceData.length>0){
+						this.voiceQueue();	
+					}else{
+						setTimeout(() => {
+							this.init()
+						}, 5000);
+					}
+			    },
+				fail:(res) => {
+					uni.showToast({
+						title:'请求失败',
+						icon:'none'
+					})
+				}
+			});
+		},
+		// 语音队列
+		voiceQueue(){
+			// #ifdef APP-PLUS
+				FvvUniTTS.init((callback) => {
+					FvvUniTTS.speak({
+						text:this.voiceData[0]
+					});
+				});
+			// #endif
+			console.log(this.voiceData[0]);
+			if(this.voiceData.length>1){
+				this.onDone(this.voiceData[1]);
+			}else{
 				setTimeout(() => {
 					this.init()
-				}, 3000);
-				return;
+				}, 5000);
 			}
-			let waitName = this.hideName(data.wait.name);
-			let seeingName = this.hideName(data.seeing.name);
-			
-			this.seqNumber = data.seq_number;
-			let dataMap = {
-				room:data.room,
-				doctor:data.doctor,
-				wait:{
-					number:data.wait.number,
-					name:waitName,
-				},
-				seeing:{
-					number:data.seeing.number,
-					name:seeingName,
-				},
-			}
-			// 请 票号  患者名 到 窗口名
-			let number = this.chineseNumeral(data.seeing.number+'');
-			let speakText = `请,${number}号,${data.seeing.name}到,${data.room}`;
-			console.log(speakText);
-			// FvvUniTTS.init((callback) => {
-			// 	FvvUniTTS.speak({
-			// 		text:speakText
-			// 	});
-			// });
-			this.onDone(speakText);
-			if(this.data.length<7){
-				this.data = this.data.concat(dataMap)
-			}else{
-				this.data[6] = dataMap; 
-				this.$forceUpdate();
-			}
-			
-			// uni.request({
-			//     url: 'http://198.100.100.36:8018/Queue/Get_Queue', 
-			//     // url: 'http://192.168.0.159:8018/Queue/Get_Queue', 
-			// 	data:{
-			// 		iType :this.iType ,
-			// 	},
-			// 	timeout:3000,
-			//     success: (res) => {
-			// 		let data = res.data.Data;
-			//     },
-			// 	fail:(res) => {
-			// 		uni.showToast({
-			// 			title:'请求失败',
-			// 			icon:'none'
-			// 		})
-			// 	}
-			// });
 		},
 		// 播放完执行
 		onDone(data){
@@ -236,7 +275,10 @@ export default {
 				date = date + ((data.length - 12)*300 ) 
 			}
 			setTimeout(() => {
-				this.init()
+				this.voiceData.shift();
+				if(this.voiceData.length>0){
+					this.voiceQueue()
+				}
 			}, date);
 			
 		},
@@ -263,11 +305,17 @@ export default {
 		//隐藏名字
 		hideName(name){
 			if(name.length==2){
-			    name = '*'+name.slice(1,name.length)
+			    name = name.slice(0,1)+'*';
 			}else if(name.length>2){
 				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
 			}
 			return name;
+		},
+		//两个数组的差集
+		findDifferentElements(array1, array2) {
+			let data = array1.filter(function(v){ return array2.indexOf(v) == -1 });
+			this.voiceData = data;
+			return data;
 		}
 	}
 };

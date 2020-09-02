@@ -30,8 +30,8 @@
 				</view>
 				<view>
 					<view class="uni-form-item ">
-						<view class="popup-title">诊室：</view>
-						<input class="uni-input" v-model="iType"  placeholder="请输入诊室" />
+						<view class="popup-title">科室：</view>
+						<input class="uni-input" v-model="iType"  placeholder="请输入科室" />
 					</view>
 					<view class="uni-form-item uni-form-btn">
 						<button type="default" class="chooseBtn" @click="navTo()">选择页面</button>
@@ -48,7 +48,9 @@
 
 <script>
 import uniPopup from '@/components/uni-popup/uni-popup.vue'
-// var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS')
+// #ifdef APP-PLUS
+	var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS');
+// #endif
 export default {
 	data() {
 		return {
@@ -59,17 +61,17 @@ export default {
 				day: '',
 				time: ''
 			},
-			title:'口腔科候诊室',
+			title:'',
 			weekday: [],
 			data:[
-				// {
-				// 	room:'诊室1',
-				// 	remark:'速来',
-				// 	doctor:'张医生',
-				// 	number:"K101",
-				// 	name:'张*鑫',
-				// 	status:'正在检查',
-				// },
+				{
+					room:'科室1',
+					remark:'速来',
+					doctor:'张医生',
+					number:"K101",
+					name:'张*鑫',
+					status:'正在检查',
+				},
 			
 			],
 			cliniqueCode:'',
@@ -78,9 +80,21 @@ export default {
 			seqNumber:'',
 			test:'测试',
 			testNubmer:0,
+			voiceData:[],
+			voiceDataInit:[],
+			voicePlayNumber:0,
+			differenceHour:8,
 		};
 	},
 	onLoad() {
+		uni.getSystemInfo({
+		    success: function (res) {
+		        console.log(res.system);
+				if(res.system=='4.2.2'){
+					this.differenceHour = 8;
+				}
+		    }
+		});
 		this.iType = uni.getStorageSync('iType')||'';
 		let date = new Date();
 		this.weekday = new Array(7);
@@ -105,18 +119,15 @@ export default {
 	methods: {
 		//选择页面
 		navTo(){
+			uni.setStorageSync('pageSetBoolean',false);
 			uni.redirectTo({
 				url: '../index/index',
-				success: res => {
-					uni.setStorageSync('pageSetBoolean',false);
-				},
-				fail: () => {},
-				complete: () => {}
 			});
 		},
 		//当前时间
 		newDate() {
 			let date = new Date();
+			date.setHours(date.getHours() + this.differenceHour);
 			this.dateText = {
 				year: date.getFullYear(),
 				month: date.getMonth() + 1,
@@ -127,7 +138,6 @@ export default {
 		},
 		// 打开设置
 		open(){
-			console.log(123);
 			this.$refs.popup.open();
 			this.popupShow = true;
 		},
@@ -141,7 +151,7 @@ export default {
 		confirm(){
 			if(this.iType===''){
 				uni.showToast({
-					title:'请输入诊室',
+					title:'请输入科室',
 					icon:'none'
 				})
 				return
@@ -163,63 +173,94 @@ export default {
 				return false;
 			}
 			// 测试使用
-			let data = {room:'诊室1',remark:'速来',doctor:'张医生',number:"K101",name:'张国鑫',status:'正在检查',};
-			data.number = data.number + this.testNubmer++
-			if(!data.name){
-				setTimeout(() => {
-					this.init()
-				}, 3000);
-				return;
-			}
-			let name = data.name;
-			if(name.length==2){
-			    name = '*'+name.slice(1,name.length)
-			}else if(name.length>2){
-				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
-			}
-			this.seqNumber = data.seq_number;
-			let dataMap = {
-				room:data.room,
-				remark:data.remark,
-				doctor:data.doctor,
-				number:data.number,
-				name:name,
-				status:data.status,
-			}
-			// 请 票号  患者名 到 窗口名
-			let number = this.chineseNumeral(dataMap.number+'');
-			let speakText = `请,${number}号,${data.name}到,${data.room}`;
-			console.log(speakText);
-			// FvvUniTTS.init((callback) => {
-			// 	FvvUniTTS.speak({
-			// 		text:speakText
-			// 	});
-			// });
-			this.onDone(speakText);
-			if(this.data.length<7){
-				this.data = this.data.concat(dataMap)
-			}else{
-				this.data[6] = dataMap; 
-				this.$forceUpdate();
-			}
+			// let datas = [{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}]
+			// datas[0].doctor_seq = datas[0].doctor_seq + this.testNubmer++
 			
-			// uni.request({
-			//     url: 'http://198.100.100.36:8018/Queue/Get_Queue', 
-			//     // url: 'http://192.168.0.159:8018/Queue/Get_Queue', 
-			// 	data:{
-			// 		iType :this.iType ,
-			// 	},
-			// 	timeout:3000,
-			//     success: (res) => {
-			// 		let data = res.data.Data;
-			//     },
-			// 	fail:(res) => {
-			// 		uni.showToast({
-			// 			title:'请求失败',
-			// 			icon:'none'
-			// 		})
-			// 	}
-			// });
+			uni.request({
+			    url: 'http://172.31.12.188:8080/Queue/Get_disp_Queue', 
+				data:{
+					dept_name :this.iType ,
+				},
+				timeout:3000,
+			    success: (res) => {
+					let datas = res.data.Data;
+					let dataMaps = [];
+					let voiceDataInit = [];
+					if(datas.length>0){
+						if(datas[0].queue_name && this.title!= datas[0].queue_name){
+							this.title = datas[0].queue_name;
+						}
+					}
+					datas.forEach((data,index) =>{
+						let name =data.patient_name?this.hideName(data.patient_name):'';
+						let dataMap = {
+							room:data.clinique_code,
+							remark:'',
+							doctor:data.doctor,
+							number:data.doctor_seq,
+							name:name,
+							status:data.status
+						}
+						dataMaps = dataMaps.concat(dataMap);
+					
+						if(name && data.status == '呼叫'){
+							let number = this.chineseNumeral(dataMap.number+'');
+							let speakText = `请,${number}号,${data.patient_name},到,${dataMap.room},检查`;
+							if(this.data.length==0){
+								this.voiceData.push(speakText);
+								this.voiceDataInit.push(speakText);
+							} 
+							else{
+								voiceDataInit = voiceDataInit.concat(speakText);
+							}
+							
+						}
+					})
+					if(voiceDataInit.length>0){
+						this.findDifferentElements(voiceDataInit,this.voiceDataInit)
+						this.voiceDataInit = voiceDataInit;
+					}
+					this.data = dataMaps;
+					console.log(this.data);
+					if(this.voiceData.length>0){
+						this.voiceQueue();	
+					}else{
+						setTimeout(() => {
+							this.init()
+						}, 5000);
+					}
+			    },
+				fail:(res) => {
+					uni.showToast({
+						title:'请求失败',
+						icon:'none'
+					})
+				}
+			});
+		},
+		// 语音队列
+		voiceQueue(){
+			// #ifdef APP-PLUS
+				FvvUniTTS.init((callback) => {
+					FvvUniTTS.speak({
+						text:this.voiceData[0]
+					});
+				});
+			// #endif
+			
+			console.log(this.voiceData[0]);
+			
+			if(this.voiceData.length>1){
+				this.onDone(this.voiceData[1]);
+			}else{
+				if(this.voicePlayNumber<3){
+					this.onDone(this.voiceData[0]);
+				}else{	
+					setTimeout(() => {
+						this.init()
+					}, 5000);
+				}
+			}
 		},
 		// 播放完执行
 		onDone(data){
@@ -228,18 +269,17 @@ export default {
 				date = date + ((data.length - 12)*300 ) 
 			}
 			setTimeout(() => {
-				this.init()
-				// uni.request({
-				//     url: 'http://198.100.100.36:8018/Queue/Set_Queue', 
-				//     // url: 'http://192.168.0.159:8018/Queue/Set_Queue', 
-				// 	data:{
-				// 		Seq_Number:this.seqNumber,
-				// 	},
-				// 	timeout:3000,
-				//     success: (res) => {
-				// 		this.init();
-				//     },
-				// });
+				this.voicePlayNumber++;
+				console.log(this.voicePlayNumber);
+				if(this.voicePlayNumber>=3){
+					this.voiceData.shift();
+					this.voicePlayNumber = 0;
+				}
+				if(this.voiceData.length>0){
+					this.voiceQueue()
+				}else{
+					this.init()
+				}
 			}, date);
 			
 		},
@@ -262,6 +302,21 @@ export default {
 			        }
 			}
 			return tmpnewchar;
+		},
+		//隐藏名字
+		hideName(name){
+			if(name.length==2){
+			    name = name.slice(0,1)+'*';
+			}else if(name.length>2){
+				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
+			}
+			return name;
+		},
+		//两个数组的差集
+		findDifferentElements(array1, array2) {
+			let data = array1.filter(function(v){ return array2.indexOf(v) == -1 });
+			this.voiceData = data;
+			return data;
 		}
 	}
 };

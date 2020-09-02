@@ -6,7 +6,7 @@
 			</view>
 			<view>
 				<view class="uni-form-item ">
-					<button type="default" @click="navTo('../waiting-room/waiting-room')">候诊室</button>
+					<button type="default" @click="navTo('../waiting-room/waiting-room')">口腔科</button>
 				</view>
 				<view class="uni-form-item ">
 					<button type="default" @click="navTo('../department/department')">科室</button>
@@ -30,12 +30,13 @@ export default {
 	onLoad() {
 		this.pageSet = uni.getStorageSync('pageSet')||'';
 		this.pageSetBoolean = uni.getStorageSync('pageSetBoolean')||'';
-		if(this.pageSet && !this.pageSetBoolean){
+		if(this.pageSet && this.pageSetBoolean){
 			this.navTo(this.pageSet);
 		}
 	},
 	methods: {
 		navTo(data){
+			uni.setStorageSync('pageSetBoolean',true);
 			uni.redirectTo({
 				url: data,
 				success: res => {

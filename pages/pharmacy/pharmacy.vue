@@ -24,8 +24,8 @@
 				<view class="info-right">
 					<view class="right-item">
 						<view class="info-patient" v-for="(item,index) in data" :class="(index+1)%2 ==0?'patient-left':''" :key="index">
-							<view class="pr-15">{{item.number}}</view>
-							<view class="pl-15">{{item.name}}</view>
+							<view class="pr-15" :class="index==0?'yellow':''">{{item.number}}</view>
+							<view class="pl-15" :class="index==0?'yellow':''">{{item.name}}</view>
 						</view>
 					</view>
 				</view>
@@ -38,8 +38,8 @@
 				</view>
 				<view>
 					<view class="uni-form-item ">
-						<view class="popup-title">诊室：</view>
-						<input class="uni-input" v-model="iType"  placeholder="请输入诊室" />
+						<view class="popup-title">窗口：</view>
+						<input class="uni-input" v-model="iType"  placeholder="请输入窗口" />
 					</view>
 					<view class="uni-form-item uni-form-btn">
 						<button type="default" class="chooseBtn" @click="navTo()">选择页面</button>
@@ -57,7 +57,9 @@
 
 <script>
 import uniPopup from '@/components/uni-popup/uni-popup.vue'
-// var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS')
+// #ifdef APP-PLUS
+	var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS');
+// #endif
 export default {
 	data() {
 		return {
@@ -71,18 +73,18 @@ export default {
 			title:'西药房',
 			weekday: [],
 			data:[
-				{
-					number:'A1002',
-					name:'张无忌',
-				},
-				{
-					number:'A1002',
-					name:'张无忌1',
-				},
-				{
-					number:'A1002',
-					name:'张无忌2',
-				}
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌',
+				// },
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌1',
+				// },
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌2',
+				// }
 			
 			],
 			cliniqueCode:'',
@@ -91,9 +93,18 @@ export default {
 			seqNumber:'',
 			test:'测试',
 			testNubmer:0,
+			differenceHour:8,
 		};
 	},
 	onLoad() {
+		uni.getSystemInfo({
+		    success: function (res) {
+		        console.log(res.system);
+				if(res.system=='4.2.2'){
+					this.differenceHour = 8;
+				}
+		    }
+		});
 		this.iType = uni.getStorageSync('iType')||'';
 		let date = new Date();
 		this.weekday = new Array(7);
@@ -112,16 +123,16 @@ export default {
 			}, 60000);
 		}, date.getSeconds() * 1000);
 		if(this.iType){
-			// this.init();
+			this.init();
 		}
 	},
 	methods: {
 		//选择页面
 		navTo(){
+			uni.setStorageSync('pageSetBoolean',false);
 			uni.redirectTo({
 				url: '../index/index',
 				success: res => {
-					uni.setStorageSync('pageSetBoolean',false);
 				},
 				fail: () => {},
 				complete: () => {}
@@ -130,12 +141,13 @@ export default {
 		//当前时间
 		newDate() {
 			let date = new Date();
+			date.setHours(date.getHours() + this.differenceHour);
 			this.dateText = {
 				year: date.getFullYear(),
 				month: date.getMonth() + 1,
 				date: date.getDate(),
 				day: this.weekday[date.getDay()],
-				time: date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
+				time:date.getHours()+ ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
 			};
 		},
 		// 打开设置
@@ -153,7 +165,7 @@ export default {
 		confirm(){
 			if(this.iType===''){
 				uni.showToast({
-					title:'请输入诊室',
+					title:'请输入窗口',
 					icon:'none'
 				})
 				return
@@ -175,64 +187,69 @@ export default {
 				return false;
 			}
 			// 测试使用
-			let data = {room:'诊室1',doctor:'张医生',wait:{number:'A100',name:'张无忌',},seeing:{number:'J1003',name:'赵敏',}};
-			data.wait.number = data.wait.number + this.testNubmer++
-			if(!data.doctor){
-				setTimeout(() => {
-					this.init()
-				}, 3000);
-				return;
-			}
-			let waitName = this.hideName(data.wait.name);
-			let seeingName = this.hideName(data.seeing.name);
+			// let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"张三","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
+			// datas[0].serial_no = datas[0].serial_no + this.testNubmer++
 			
-			this.seqNumber = data.seq_number;
-			let dataMap = {
-				room:data.room,
-				doctor:data.doctor,
-				wait:{
-					number:data.wait.number,
-					name:waitName,
-				},
-				seeing:{
-					number:data.seeing.number,
-					name:seeingName,
-				},
-			}
-			// 请 票号  患者名 到 窗口名
-			let number = this.chineseNumeral(data.seeing.number+'');
-			let speakText = `请,${number}号,${data.seeing.name}到,${data.room}`;
-			console.log(speakText);
-			// FvvUniTTS.init((callback) => {
-			// 	FvvUniTTS.speak({
-			// 		text:speakText
-			// 	});
-			// });
-			this.onDone(speakText);
-			if(this.data.length<7){
-				this.data = this.data.concat(dataMap)
-			}else{
-				this.data[6] = dataMap; 
-				this.$forceUpdate();
-			}
 			
-			// uni.request({
-			//     url: 'http://198.100.100.36:8018/Queue/Get_Queue', 
-			//     // url: 'http://192.168.0.159:8018/Queue/Get_Queue', 
-			// 	data:{
-			// 		iType :this.iType ,
-			// 	},
-			// 	timeout:3000,
-			//     success: (res) => {
-			// 		let data = res.data.Data;
-			//     },
-			// 	fail:(res) => {
-			// 		uni.showToast({
-			// 			title:'请求失败',
-			// 			icon:'none'
-			// 		})
-			// 	}
-			// });
+			
+			uni.request({
+			    url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
+			    // url: 'http://192.168.0.159:8018/Queue/Get_Queue', 
+				data:{
+					counter_no :this.iType ,
+				},
+				timeout:3000,
+			    success: (res) => {
+					let datas = res.data.Data;
+					let dataMaps = [];
+					datas.forEach((data,index) =>{
+						let name =data.sick_name?this.hideName(data.sick_name):'';
+						let dataMap = {
+							number:data.serial_no,
+							name:name,
+						}
+						dataMaps = dataMaps.concat(dataMap);
+					})
+					if(this.data.length>0){
+						if(this.data[0].number != dataMaps[0].number){
+							let number = this.chineseNumeral(dataMaps[0].number+'');
+							// 1001 张*到 西药房1  取药
+							let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
+							// #ifdef APP-PLUS
+								FvvUniTTS.init((callback) => {
+									FvvUniTTS.speak({
+										text:speakText
+									});
+								});
+							// #endif
+							this.onDone(speakText);
+							console.log(speakText);
+						}else{
+							setTimeout(() => {
+								this.init()
+							}, 5000);
+						}
+					}else{
+						let number = this.chineseNumeral(dataMaps[0].number+'');
+						let speakText = `请,${number}号,${datas[0].sick_name}到,${datas[0].counter_name}取药`;
+						// #ifdef APP-PLUS
+							FvvUniTTS.init((callback) => {
+								FvvUniTTS.speak({
+									text:speakText
+								});
+							});
+						// #endif
+						this.onDone(speakText);
+					}
+					this.data = dataMaps;
+			    },
+				fail:(res) => {
+					uni.showToast({
+						title:'请求失败',
+						icon:'none'
+					})
+				}
+			});
 		},
 		// 播放完执行
 		onDone(data){
@@ -268,7 +285,7 @@ export default {
 		//隐藏名字
 		hideName(name){
 			if(name.length==2){
-			    name = '*'+name.slice(1,name.length)
+			    name = name.slice(0,1)+'*';
 			}else if(name.length>2){
 				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
 			}
@@ -308,6 +325,9 @@ page {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+.yellow{
+	color: #fcff00 !important;
 }
 .number-text{
 	font-size: 332px;
