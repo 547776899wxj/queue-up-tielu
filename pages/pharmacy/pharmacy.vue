@@ -4,7 +4,7 @@
 		<view class="header">
 			<view class="header-title">{{title}}</view>
 			<view class="header-time">
-				<view>
+				<view v-if="dateText.year">
 					<text>{{ dateText.year }}年{{ dateText.month }}月{{ dateText.date }}日</text>
 				</view>
 				<view>
@@ -18,7 +18,7 @@
 			<view class="info-bottom">
 				<view class="info-number">
 					<view class="nubmer-circular">
-						<view class="number-text">2</view>
+						<view class="number-text">{{iType}}</view>
 					</view>
 				</view>
 				<view class="info-right">
@@ -73,18 +73,18 @@ export default {
 			title:'西药房',
 			weekday: [],
 			data:[
-				// {
-				// 	number:'A1002',
-				// 	name:'张无忌',
-				// },
-				// {
-				// 	number:'A1002',
-				// 	name:'张无忌1',
-				// },
-				// {
-				// 	number:'A1002',
-				// 	name:'张无忌2',
-				// }
+				{
+					number:'A1002',
+					name:'张无忌',
+				},
+				{
+					number:'A1002',
+					name:'张无忌1',
+				},
+				{
+					number:'A1002',
+					name:'张无忌2',
+				}
 			
 			],
 			cliniqueCode:'',
@@ -93,18 +93,10 @@ export default {
 			seqNumber:'',
 			test:'测试',
 			testNubmer:0,
-			differenceHour:8,
+			voicePlayNumber:0,
 		};
 	},
 	onLoad() {
-		uni.getSystemInfo({
-		    success: function (res) {
-		        console.log(res.system);
-				if(res.system=='4.2.2'){
-					this.differenceHour = 8;
-				}
-		    }
-		});
 		this.iType = uni.getStorageSync('iType')||'';
 		let date = new Date();
 		this.weekday = new Array(7);
@@ -115,13 +107,6 @@ export default {
 		this.weekday[4] = '星期四';
 		this.weekday[5] = '星期五';
 		this.weekday[6] = '星期六';
-		this.newDate();
-		setTimeout(() => {
-			this.newDate();
-			setInterval(() => {
-				this.newDate();
-			}, 60000);
-		}, date.getSeconds() * 1000);
 		if(this.iType){
 			this.init();
 		}
@@ -139,15 +124,14 @@ export default {
 			});
 		},
 		//当前时间
-		newDate() {
-			let date = new Date();
-			date.setHours(date.getHours() + this.differenceHour);
+		newDate(dataTime) {
+			let date = new Date(dataTime);
 			this.dateText = {
 				year: date.getFullYear(),
 				month: date.getMonth() + 1,
 				date: date.getDate(),
 				day: this.weekday[date.getDay()],
-				time:date.getHours()+ ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
+				time: date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
 			};
 		},
 		// 打开设置
@@ -187,11 +171,10 @@ export default {
 				return false;
 			}
 			// 测试使用
-			// let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"张三","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
-			// datas[0].serial_no = datas[0].serial_no + this.testNubmer++
-			
-			
-			
+			// let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
+			// let datas = [];
+			// let dataMaps = [];
+		
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
 			    // url: 'http://192.168.0.159:8018/Queue/Get_Queue', 
@@ -202,6 +185,7 @@ export default {
 			    success: (res) => {
 					let datas = res.data.Data;
 					let dataMaps = [];
+					this.newDate(res.data.ServiceTime);
 					datas.forEach((data,index) =>{
 						let name =data.sick_name?this.hideName(data.sick_name):'';
 						let dataMap = {
@@ -210,36 +194,28 @@ export default {
 						}
 						dataMaps = dataMaps.concat(dataMap);
 					})
-					if(this.data.length>0){
+					
+					if(this.data.length>0 && dataMaps.length>0){
 						if(this.data[0].number != dataMaps[0].number){
 							let number = this.chineseNumeral(dataMaps[0].number+'');
 							// 1001 张*到 西药房1  取药
 							let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
-							// #ifdef APP-PLUS
-								FvvUniTTS.init((callback) => {
-									FvvUniTTS.speak({
-										text:speakText
-									});
-								});
-							// #endif
+							
 							this.onDone(speakText);
-							console.log(speakText);
 						}else{
 							setTimeout(() => {
 								this.init()
 							}, 5000);
 						}
-					}else{
+					}else if(datas.length>0){
 						let number = this.chineseNumeral(dataMaps[0].number+'');
 						let speakText = `请,${number}号,${datas[0].sick_name}到,${datas[0].counter_name}取药`;
-						// #ifdef APP-PLUS
-							FvvUniTTS.init((callback) => {
-								FvvUniTTS.speak({
-									text:speakText
-								});
-							});
-						// #endif
+						
 						this.onDone(speakText);
+					}else{
+						setTimeout(() => {
+							this.init()
+						}, 5000);
 					}
 					this.data = dataMaps;
 			    },
@@ -253,12 +229,27 @@ export default {
 		},
 		// 播放完执行
 		onDone(data){
+			// #ifdef APP-PLUS
+				FvvUniTTS.init((callback) => {
+					FvvUniTTS.speak({
+						text:data
+					});
+				});
+			// #endif
+			this.voicePlayNumber++;
+			console.log(data);
 			let date = 4300;
 			if(data.length>12){
 				date = date + ((data.length - 12)*300 ) 
 			}
 			setTimeout(() => {
-				this.init()
+				if(this.voicePlayNumber>=3){
+					this.voicePlayNumber = 0;
+					this.init();
+				}else{
+					this.onDone(data);
+				}
+				
 			}, date);
 			
 		},
@@ -287,7 +278,7 @@ export default {
 			if(name.length==2){
 			    name = name.slice(0,1)+'*';
 			}else if(name.length>2){
-				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
+				name = name.slice(0,1) + '*' + name.slice(2,name.length)
 			}
 			return name;
 		}

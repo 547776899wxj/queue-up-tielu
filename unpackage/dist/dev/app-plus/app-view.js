@@ -252,7 +252,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("候诊室")]
+                    [_vm._v("口腔科")]
                   )
                 ],
                 1
@@ -1048,23 +1048,25 @@ var render = function() {
             "v-uni-view",
             { staticClass: _vm._$g(4, "sc"), attrs: { _i: 4 } },
             [
-              _c(
-                "v-uni-view",
-                { attrs: { _i: 5 } },
-                [
-                  _c("v-uni-text", { attrs: { _i: 6 } }, [
-                    _vm._v(
-                      _vm._$g(6, "t0-0") +
-                        "年" +
-                        _vm._$g(6, "t0-1") +
-                        "月" +
-                        _vm._$g(6, "t0-2") +
-                        "日"
-                    )
-                  ])
-                ],
-                1
-              ),
+              _vm._$g(5, "i")
+                ? _c(
+                    "v-uni-view",
+                    { attrs: { _i: 5 } },
+                    [
+                      _c("v-uni-text", { attrs: { _i: 6 } }, [
+                        _vm._v(
+                          _vm._$g(6, "t0-0") +
+                            "年" +
+                            _vm._$g(6, "t0-1") +
+                            "月" +
+                            _vm._$g(6, "t0-2") +
+                            "日"
+                        )
+                      ])
+                    ],
+                    1
+                  )
+                : _vm._e(),
               _c(
                 "v-uni-view",
                 { attrs: { _i: 7 } },
@@ -1895,23 +1897,25 @@ var render = function() {
             "v-uni-view",
             { staticClass: _vm._$g(4, "sc"), attrs: { _i: 4 } },
             [
-              _c(
-                "v-uni-view",
-                { attrs: { _i: 5 } },
-                [
-                  _c("v-uni-text", { attrs: { _i: 6 } }, [
-                    _vm._v(
-                      _vm._$g(6, "t0-0") +
-                        "年" +
-                        _vm._$g(6, "t0-1") +
-                        "月" +
-                        _vm._$g(6, "t0-2") +
-                        "日"
-                    )
-                  ])
-                ],
-                1
-              ),
+              _vm._$g(5, "i")
+                ? _c(
+                    "v-uni-view",
+                    { attrs: { _i: 5 } },
+                    [
+                      _c("v-uni-text", { attrs: { _i: 6 } }, [
+                        _vm._v(
+                          _vm._$g(6, "t0-0") +
+                            "年" +
+                            _vm._$g(6, "t0-1") +
+                            "月" +
+                            _vm._$g(6, "t0-2") +
+                            "日"
+                        )
+                      ])
+                    ],
+                    1
+                  )
+                : _vm._e(),
               _c(
                 "v-uni-view",
                 { attrs: { _i: 7 } },
@@ -2123,8 +2127,7 @@ var render = function() {
           )
         ],
         1
-      ),
-      _c("v-uni-view", { attrs: { _i: 32 } }, [_vm._v(_vm._$g(32, "t0-0"))])
+      )
     ],
     1
   )
@@ -2336,23 +2339,25 @@ var render = function() {
             "v-uni-view",
             { staticClass: _vm._$g(4, "sc"), attrs: { _i: 4 } },
             [
-              _c(
-                "v-uni-view",
-                { attrs: { _i: 5 } },
-                [
-                  _c("v-uni-text", { attrs: { _i: 6 } }, [
-                    _vm._v(
-                      _vm._$g(6, "t0-0") +
-                        "年" +
-                        _vm._$g(6, "t0-1") +
-                        "月" +
-                        _vm._$g(6, "t0-2") +
-                        "日"
-                    )
-                  ])
-                ],
-                1
-              ),
+              _vm._$g(5, "i")
+                ? _c(
+                    "v-uni-view",
+                    { attrs: { _i: 5 } },
+                    [
+                      _c("v-uni-text", { attrs: { _i: 6 } }, [
+                        _vm._v(
+                          _vm._$g(6, "t0-0") +
+                            "年" +
+                            _vm._$g(6, "t0-1") +
+                            "月" +
+                            _vm._$g(6, "t0-2") +
+                            "日"
+                        )
+                      ])
+                    ],
+                    1
+                  )
+                : _vm._e(),
               _c(
                 "v-uni-view",
                 { attrs: { _i: 7 } },
@@ -2401,7 +2406,7 @@ var render = function() {
                       _c(
                         "v-uni-view",
                         { staticClass: _vm._$g(15, "sc"), attrs: { _i: 15 } },
-                        [_vm._v("2")]
+                        [_vm._v(_vm._$g(15, "t0-0"))]
                       )
                     ],
                     1

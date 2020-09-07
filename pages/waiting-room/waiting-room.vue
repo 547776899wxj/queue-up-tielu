@@ -4,7 +4,7 @@
 		<view class="header">
 			<view class="header-title">{{title}}</view>
 			<view class="header-time">
-				<view>
+				<view v-if="dateText.year">
 					<text>{{ dateText.year }}年{{ dateText.month }}月{{ dateText.date }}日</text>
 				</view>
 				<view>
@@ -64,14 +64,14 @@ export default {
 			title:'',
 			weekday: [],
 			data:[
-				{
-					room:'科室1',
-					remark:'速来',
-					doctor:'张医生',
-					number:"K101",
-					name:'张*鑫',
-					status:'正在检查',
-				},
+				// {
+				// 	room:'科室1',
+				// 	remark:'速来',
+				// 	doctor:'张医生',
+				// 	number:"K101",
+				// 	name:'张*鑫',
+				// 	status:'正在检查',
+				// },
 			
 			],
 			cliniqueCode:'',
@@ -83,18 +83,9 @@ export default {
 			voiceData:[],
 			voiceDataInit:[],
 			voicePlayNumber:0,
-			differenceHour:8,
 		};
 	},
 	onLoad() {
-		uni.getSystemInfo({
-		    success: function (res) {
-		        console.log(res.system);
-				if(res.system=='4.2.2'){
-					this.differenceHour = 8;
-				}
-		    }
-		});
 		this.iType = uni.getStorageSync('iType')||'';
 		let date = new Date();
 		this.weekday = new Array(7);
@@ -105,13 +96,14 @@ export default {
 		this.weekday[4] = '星期四';
 		this.weekday[5] = '星期五';
 		this.weekday[6] = '星期六';
-		this.newDate();
-		setTimeout(() => {
-			this.newDate();
-			setInterval(() => {
-				this.newDate();
-			}, 60000);
-		}, date.getSeconds() * 1000);
+		// this.newDate();
+		// setTimeout(() => {
+		// 	this.newDate();
+		// 	setInterval(() => {
+		// 		this.newDate();
+		// 	}, 60000);
+		// }, date.getSeconds() * 1000);
+		
 		if(this.iType){
 			this.init();
 		}
@@ -125,9 +117,8 @@ export default {
 			});
 		},
 		//当前时间
-		newDate() {
-			let date = new Date();
-			date.setHours(date.getHours() + this.differenceHour);
+		newDate(dataTime) {
+			let date = new Date(dataTime);
 			this.dateText = {
 				year: date.getFullYear(),
 				month: date.getMonth() + 1,
@@ -175,6 +166,9 @@ export default {
 			// 测试使用
 			// let datas = [{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}]
 			// datas[0].doctor_seq = datas[0].doctor_seq + this.testNubmer++
+			// let datas = []
+			// let dataMaps = [];
+			// let voiceDataInit = [];
 			
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_disp_Queue', 
@@ -186,6 +180,7 @@ export default {
 					let datas = res.data.Data;
 					let dataMaps = [];
 					let voiceDataInit = [];
+					this.newDate(res.data.ServiceTime);
 					if(datas.length>0){
 						if(datas[0].queue_name && this.title!= datas[0].queue_name){
 							this.title = datas[0].queue_name;
@@ -308,7 +303,7 @@ export default {
 			if(name.length==2){
 			    name = name.slice(0,1)+'*';
 			}else if(name.length>2){
-				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
+				name = name.slice(0,1) + '*' + name.slice(2,name.length)
 			}
 			return name;
 		},

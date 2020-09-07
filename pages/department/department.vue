@@ -4,7 +4,7 @@
 		<view class="header">
 			<view class="header-title">{{title}}</view>
 			<view class="header-time">
-				<view>
+				<view v-if="dateText.year">
 					<text>{{ dateText.year }}年{{ dateText.month }}月{{ dateText.date }}日</text>
 				</view>
 				<view>
@@ -90,17 +90,10 @@ export default {
 			voiceData:[],
 			voiceDataInit:[],
 			voicePlayNumber:0,
-			differenceHour:8,
 		};
 	},
 	onLoad() {
-		uni.getSystemInfo({
-		    success: (res) => {
-				if(res.system=='4.2.2'){
-					this.differenceHour = 8;
-				}
-		    }
-		});
+		
 		this.iType = uni.getStorageSync('iType')||'';
 		let date = new Date();
 		this.test = date;
@@ -112,13 +105,6 @@ export default {
 		this.weekday[4] = '星期四';
 		this.weekday[5] = '星期五';
 		this.weekday[6] = '星期六';
-		this.newDate();
-		setTimeout(() => {
-			this.newDate();
-			setInterval(() => {
-				this.newDate();
-			}, 60000);
-		}, date.getSeconds() * 1000);
 		if(this.iType){
 			this.init();
 		}
@@ -136,16 +122,15 @@ export default {
 			});
 		},
 		//当前时间
-		newDate() {
-			let date = new Date();
-			date.setHours(date.getHours() + this.differenceHour);
+		newDate(dataTime) {
+			let date = new Date(dataTime);
 			this.dateText = {
 				year: date.getFullYear(),
 				month: date.getMonth() + 1,
 				date: date.getDate(),
 				day: this.weekday[date.getDay()],
 				time: date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-			};	
+			};
 		},
 		// 打开设置
 		open(){
@@ -198,6 +183,7 @@ export default {
 					let datas = res.data.Data;
 					let dataMaps = [];
 					let voiceDataInit = [];
+					this.newDate(res.data.ServiceTime);
 					if(datas.length>0){
 						if(datas[0].queue_name && this.title!= datas[0].queue_name){
 							this.title = datas[0].queue_name;
@@ -307,7 +293,7 @@ export default {
 			if(name.length==2){
 			    name = name.slice(0,1)+'*';
 			}else if(name.length>2){
-				name = name.slice(0,1) + '*' + name.slice(name.length-1,name.length)
+				name = name.slice(0,1) + '*' + name.slice(2,name.length)
 			}
 			return name;
 		},
