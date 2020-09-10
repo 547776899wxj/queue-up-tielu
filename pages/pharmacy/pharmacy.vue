@@ -23,7 +23,7 @@
 				</view>
 				<view class="info-right">
 					<view class="right-item">
-						<view class="info-patient" v-for="(item,index) in data" :class="(index+1)%2 ==0?'patient-left':''" :key="index">
+						<view class="info-patient" v-for="(item,index) in data" :key="index">
 							<view class="pr-15" :class="index==0?'yellow':''">{{item.number}}</view>
 							<view class="pl-15" :class="index==0?'yellow':''">{{item.name}}</view>
 						</view>
@@ -73,18 +73,22 @@ export default {
 			title:'西药房',
 			weekday: [],
 			data:[
-				{
-					number:'A1002',
-					name:'张无忌',
-				},
-				{
-					number:'A1002',
-					name:'张无忌1',
-				},
-				{
-					number:'A1002',
-					name:'张无忌2',
-				}
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌',
+				// },
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌1',
+				// },
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌2',
+				// },
+				// {
+				// 	number:'A1002',
+				// 	name:'张无忌2',
+				// }
 			
 			],
 			cliniqueCode:'',
@@ -171,9 +175,51 @@ export default {
 				return false;
 			}
 			// 测试使用
-			// let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
+			let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三三三","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
 			// let datas = [];
-			// let dataMaps = [];
+			datas[0].serial_no = datas[0].serial_no + this.testNubmer++;
+			let dataMaps = [];
+			if(datas.length>3){
+				datas.slice(0,3);
+			}
+			datas.forEach((data,index) =>{
+				let name =data.sick_name?this.hideName(data.sick_name):'';
+				let dataMap = {
+					number:data.serial_no,
+					name:name,
+				}
+				dataMaps = dataMaps.concat(dataMap);
+			})
+			
+			if(this.data.length>0 && dataMaps.length>0){
+				if(this.data[0].number != dataMaps[0].number){
+					let number = this.chineseNumeral(dataMaps[0].number+'');
+					// 1001 张*到 西药房1  取药
+					let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
+					this.onDone(speakText);
+				}
+				else if (datas[0].Replay==true){
+					let number = this.chineseNumeral(dataMaps[0].number+'');
+					// 1001 张*到 西药房1  取药
+					let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
+					this.onDone(speakText);
+				}
+				else{
+					setTimeout(() => {
+						this.init()
+					}, 5000);
+				}
+			}else if(datas.length>0){
+				let number = this.chineseNumeral(dataMaps[0].number+'');
+				let speakText = `请,${number}号,${datas[0].sick_name}到,${datas[0].counter_name}取药`;
+				
+				this.onDone(speakText);
+			}else{
+				setTimeout(() => {
+					this.init()
+				}, 5000);
+			}
+			this.data = dataMaps;
 		
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
@@ -186,6 +232,9 @@ export default {
 					let datas = res.data.Data;
 					let dataMaps = [];
 					this.newDate(res.data.ServiceTime);
+					if(datas.length>3){
+						datas.slice(0,3);
+					}
 					datas.forEach((data,index) =>{
 						let name =data.sick_name?this.hideName(data.sick_name):'';
 						let dataMap = {
@@ -200,9 +249,15 @@ export default {
 							let number = this.chineseNumeral(dataMaps[0].number+'');
 							// 1001 张*到 西药房1  取药
 							let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
-							
 							this.onDone(speakText);
-						}else{
+						}
+						else if (datas[0].Replay==true){
+							let number = this.chineseNumeral(dataMaps[0].number+'');
+							// 1001 张*到 西药房1  取药
+							let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
+							this.onDone(speakText);
+						}
+						else{
 							setTimeout(() => {
 								this.init()
 							}, 5000);
@@ -293,6 +348,9 @@ export default {
 .pl-15{
 	padding-left: 15px;
 }
+.pt-15{
+	padding-top: 15px;
+}
 page {
 	height: 100%;
 }
@@ -317,8 +375,11 @@ page {
 	justify-content: center;
 	align-items: center;
 }
-.yellow{
+.info-patient view.yellow{
 	color: #fcff00 !important;
+	font-size: 127px;
+	height: 260px;
+	line-height: 260px;
 }
 .number-text{
 	font-size: 332px;
@@ -391,10 +452,9 @@ page {
 .info-patient.patient-left{
 	width: 585px;
 }
-.info-patient {
+.info-patient {			
 	display: flex;
-	height: 126px;
-	width: 654px;
+	width: 1236px;
 	justify-content: center;
 	align-items: center;
 	white-space: nowrap;
@@ -402,10 +462,11 @@ page {
 	text-overflow: ellipsis;
 }
 .info-patient view {
-	font-size: 64px;
+	font-size: 81px;
 	color: #fff;
 	text-align: center;
 	letter-spacing: 4px;
+	font-weight: bold;
 }
 .info-title{
 	font-size: 125px;
