@@ -233,6 +233,9 @@ export default {
 						title:'请求失败',
 						icon:'none'
 					})
+					setTimeout(() => {
+						this.init()
+					}, 5000);
 				}
 			});
 		},

@@ -24,8 +24,8 @@
 				<view class="info-right">
 					<view class="right-item">
 						<view class="info-patient" v-for="(item,index) in data" :key="index">
-							<view class="pr-15" :class="index==0?'yellow':''">{{item.number}}</view>
-							<view class="pl-15" :class="index==0?'yellow':''">{{item.name}}</view>
+							<view class="pr-15" :class="item.name==playName?'yellow':''">{{item.number}}</view>
+							<view class="pl-15" :class="item.name==playName?'yellow':''">{{item.name}}</view>
 						</view>
 					</view>
 				</view>
@@ -98,6 +98,9 @@ export default {
 			test:'测试',
 			testNubmer:0,
 			voicePlayNumber:0,
+			voiceDataInit:[],
+			voiceData:[],
+			playName:'',
 		};
 	},
 	onLoad() {
@@ -175,55 +178,15 @@ export default {
 				return false;
 			}
 			// 测试使用
-			let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三三三","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
+			let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三三三","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"101","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"王五","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10002","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"王五","Replay":true, "call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
+			// if(this.testNubmer>=2){
+			// 	datas[2].Replay = false;
+			// }
 			// let datas = [];
-			datas[0].serial_no = datas[0].serial_no + this.testNubmer++;
-			let dataMaps = [];
-			if(datas.length>3){
-				datas.slice(0,3);
-			}
-			datas.forEach((data,index) =>{
-				let name =data.sick_name?this.hideName(data.sick_name):'';
-				let dataMap = {
-					number:data.serial_no,
-					name:name,
-				}
-				dataMaps = dataMaps.concat(dataMap);
-			})
-			
-			if(this.data.length>0 && dataMaps.length>0){
-				if(this.data[0].number != dataMaps[0].number){
-					let number = this.chineseNumeral(dataMaps[0].number+'');
-					// 1001 张*到 西药房1  取药
-					let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
-					this.onDone(speakText);
-				}
-				else if (datas[0].Replay==true){
-					let number = this.chineseNumeral(dataMaps[0].number+'');
-					// 1001 张*到 西药房1  取药
-					let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
-					this.onDone(speakText);
-				}
-				else{
-					setTimeout(() => {
-						this.init()
-					}, 5000);
-				}
-			}else if(datas.length>0){
-				let number = this.chineseNumeral(dataMaps[0].number+'');
-				let speakText = `请,${number}号,${datas[0].sick_name}到,${datas[0].counter_name}取药`;
-				
-				this.onDone(speakText);
-			}else{
-				setTimeout(() => {
-					this.init()
-				}, 5000);
-			}
-			this.data = dataMaps;
+			// datas[0].serial_no = datas[0].serial_no + this.testNubmer++;
 		
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
-			    // url: 'http://192.168.0.159:8018/Queue/Get_Queue', 
 				data:{
 					counter_no :this.iType ,
 				},
@@ -231,7 +194,8 @@ export default {
 			    success: (res) => {
 					let datas = res.data.Data;
 					let dataMaps = [];
-					this.newDate(res.data.ServiceTime);
+					let voiceDataInit = [];
+					this.voiceData = [];
 					if(datas.length>3){
 						datas.slice(0,3);
 					}
@@ -242,69 +206,93 @@ export default {
 							name:name,
 						}
 						dataMaps = dataMaps.concat(dataMap);
+						if(name){
+							let number = this.chineseNumeral(dataMap.number+'');
+							let speakText = `请,${number}号,${data.sick_name},到,${data.counter_name},取药 `;
+							if(this.data.length==0){
+								this.voiceData.push(speakText);
+								this.voiceDataInit.push(speakText);
+							}else if (data.Replay==true){
+								this.voiceData.push(speakText);
+								voiceDataInit = voiceDataInit.concat(speakText);
+							}
+							else{
+								voiceDataInit = voiceDataInit.concat(speakText);
+							}
+						}
 					})
 					
-					if(this.data.length>0 && dataMaps.length>0){
-						if(this.data[0].number != dataMaps[0].number){
-							let number = this.chineseNumeral(dataMaps[0].number+'');
-							// 1001 张*到 西药房1  取药
-							let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
-							this.onDone(speakText);
-						}
-						else if (datas[0].Replay==true){
-							let number = this.chineseNumeral(dataMaps[0].number+'');
-							// 1001 张*到 西药房1  取药
-							let speakText = `请,${number}号,${datas[0].sick_name},到,${datas[0].counter_name},取药 `;
-							this.onDone(speakText);
-						}
-						else{
-							setTimeout(() => {
-								this.init()
-							}, 5000);
-						}
-					}else if(datas.length>0){
-						let number = this.chineseNumeral(dataMaps[0].number+'');
-						let speakText = `请,${number}号,${datas[0].sick_name}到,${datas[0].counter_name}取药`;
-						
-						this.onDone(speakText);
+					if(voiceDataInit.length>0 ){
+						let voiceData = this.findDifferentElements(voiceDataInit,this.voiceDataInit); 
+						this.voiceData = this.voiceData.concat(voiceData)
+						this.voiceDataInit = voiceDataInit;
+					}
+					this.data = dataMaps;
+					if(this.voiceData.length>0){
+						this.voiceQueue();	
 					}else{
 						setTimeout(() => {
 							this.init()
 						}, 5000);
 					}
-					this.data = dataMaps;
 			    },
 				fail:(res) => {
 					uni.showToast({
 						title:'请求失败',
 						icon:'none'
 					})
+					setTimeout(() => {
+						this.init()
+					}, 5000);
 				}
 			});
 		},
-		// 播放完执行
-		onDone(data){
+		//两个数组的差集
+		findDifferentElements(array1, array2) {
+			return  array1.filter(function(v){ return array2.indexOf(v) == -1 });
+		},
+		// 语音队列
+		voiceQueue(){
 			// #ifdef APP-PLUS
 				FvvUniTTS.init((callback) => {
 					FvvUniTTS.speak({
-						text:data
+						text:this.voiceData[0]
 					});
 				});
 			// #endif
-			this.voicePlayNumber++;
-			console.log(data);
+			//当前叫号姓名
+			if(this.voicePlayNumber==0){
+				this.playName =this.hideName(this.voiceData[0].split(',')[2]);
+			}
+			if(this.voiceData.length>1){
+				this.onDone(this.voiceData[1]);
+			}else{
+				if(this.voicePlayNumber<3){
+					this.onDone(this.voiceData[0]);
+				}else{	
+					setTimeout(() => {
+						this.init()
+					}, 5000);
+				}
+			}
+		},
+		// 播放完执行
+		onDone(data){
 			let date = 4300;
 			if(data.length>12){
 				date = date + ((data.length - 12)*300 ) 
 			}
 			setTimeout(() => {
+				this.voicePlayNumber++;
 				if(this.voicePlayNumber>=3){
+					this.voiceData.shift();
 					this.voicePlayNumber = 0;
-					this.init();
-				}else{
-					this.onDone(data);
 				}
-				
+				if(this.voiceData.length>0){
+					this.voiceQueue()
+				}else{
+					this.init()
+				}
 			}, date);
 			
 		},
@@ -443,6 +431,10 @@ page {
 .info{
 	padding-left: 55px;
 	padding-right: 55px;
+}
+.info-right{
+	display: flex;
+	align-items: center;
 }
 .right-item{
 	display: flex;
