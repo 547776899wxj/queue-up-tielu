@@ -2427,7 +2427,6 @@ var render = function() {
                         {
                           key: item,
                           staticClass: _vm._$g("18-" + $30, "sc"),
-                          class: _vm._$g("18-" + $30, "c"),
                           attrs: { _i: "18-" + $30 }
                         },
                         [
@@ -2509,10 +2508,136 @@ var render = function() {
                     { staticClass: _vm._$g(28, "sc"), attrs: { _i: 28 } },
                     [
                       _c(
+                        "v-uni-view",
+                        { staticClass: _vm._$g(29, "sc"), attrs: { _i: 29 } },
+                        [_vm._v("声音：")]
+                      ),
+                      _c(
+                        "v-uni-radio-group",
+                        {
+                          staticClass: _vm._$g(30, "sc"),
+                          attrs: { _i: 30 },
+                          on: {
+                            change: function($event) {
+                              return _vm.$handleViewEvent($event)
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "v-uni-label",
+                            {
+                              staticClass: _vm._$g(31, "sc"),
+                              attrs: { _i: 31 }
+                            },
+                            [
+                              _c(
+                                "v-uni-view",
+                                { attrs: { _i: 32 } },
+                                [
+                                  _c("v-uni-radio", {
+                                    staticClass: _vm._$g(33, "sc"),
+                                    attrs: {
+                                      value: "0",
+                                      checked: _vm._$g(33, "a-checked"),
+                                      _i: 33
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _c(
+                                "v-uni-view",
+                                {
+                                  staticClass: _vm._$g(34, "sc"),
+                                  attrs: { _i: 34 }
+                                },
+                                [_vm._v("无")]
+                              )
+                            ],
+                            1
+                          ),
+                          _c(
+                            "v-uni-label",
+                            {
+                              staticClass: _vm._$g(35, "sc"),
+                              attrs: { _i: 35 }
+                            },
+                            [
+                              _c(
+                                "v-uni-view",
+                                { attrs: { _i: 36 } },
+                                [
+                                  _c("v-uni-radio", {
+                                    staticClass: _vm._$g(37, "sc"),
+                                    attrs: {
+                                      value: "1",
+                                      checked: _vm._$g(37, "a-checked"),
+                                      _i: 37
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _c(
+                                "v-uni-view",
+                                {
+                                  staticClass: _vm._$g(38, "sc"),
+                                  attrs: { _i: 38 }
+                                },
+                                [_vm._v("单屏")]
+                              )
+                            ],
+                            1
+                          ),
+                          _c(
+                            "v-uni-label",
+                            {
+                              staticClass: _vm._$g(39, "sc"),
+                              attrs: { _i: 39 }
+                            },
+                            [
+                              _c(
+                                "v-uni-view",
+                                { attrs: { _i: 40 } },
+                                [
+                                  _c("v-uni-radio", {
+                                    staticClass: _vm._$g(41, "sc"),
+                                    attrs: {
+                                      value: "2",
+                                      checked: _vm._$g(41, "a-checked"),
+                                      _i: 41
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _c(
+                                "v-uni-view",
+                                {
+                                  staticClass: _vm._$g(42, "sc"),
+                                  attrs: { _i: 42 }
+                                },
+                                [_vm._v("全播")]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _c(
+                    "v-uni-view",
+                    { staticClass: _vm._$g(43, "sc"), attrs: { _i: 43 } },
+                    [
+                      _c(
                         "v-uni-button",
                         {
-                          staticClass: _vm._$g(29, "sc"),
-                          attrs: { type: "default", _i: 29 },
+                          staticClass: _vm._$g(44, "sc"),
+                          attrs: { type: "default", _i: 44 },
                           on: {
                             click: function($event) {
                               return _vm.$handleViewEvent($event)
@@ -2526,13 +2651,13 @@ var render = function() {
                   ),
                   _c(
                     "v-uni-view",
-                    { staticClass: _vm._$g(30, "sc"), attrs: { _i: 30 } },
+                    { staticClass: _vm._$g(45, "sc"), attrs: { _i: 45 } },
                     [
                       _c(
                         "v-uni-button",
                         {
-                          staticClass: _vm._$g(31, "sc"),
-                          attrs: { _i: 31 },
+                          staticClass: _vm._$g(46, "sc"),
+                          attrs: { _i: 46 },
                           on: {
                             click: function($event) {
                               return _vm.$handleViewEvent($event)
@@ -2544,8 +2669,8 @@ var render = function() {
                       _c(
                         "v-uni-button",
                         {
-                          staticClass: _vm._$g(32, "sc"),
-                          attrs: { _i: 32 },
+                          staticClass: _vm._$g(47, "sc"),
+                          attrs: { _i: 47 },
                           on: {
                             click: function($event) {
                               return _vm.$handleViewEvent($event)
@@ -2658,7 +2783,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ./node_modules/css-loader/dist/runtime/api.js */ 10);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "\n.pr-15{\r\n\tpadding-right: 15px;\n}\n.pl-15{\r\n\tpadding-left: 15px;\n}\nbody {\r\n\theight: 100%;\n}\n.info-bottom{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n    padding-top: 128px;\n}\n.info-number{\r\n\theight: 504px;\r\n\twidth: 574px;\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\n}\n.nubmer-circular{\r\n    height: 350px;\r\n    width: 350px;\r\n\tposition: relative;\r\n    border-radius: 300px;\r\n    border: 35px solid #fcff00;\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\n}\n.yellow{\r\n\tcolor: #fcff00 !important;\n}\n.number-text{\r\n\tfont-size: 332px;\r\n\tposition: absolute;\r\n\tcolor: #fcff00;\r\n\tfont-weight: bold;\n}\n.uni-form-item.uni-form-btn{\r\n\tpadding: 0;\n}\n.chooseBtn{\r\n\tfont-size: 30px;\r\n\twidth: 438px;\n}\n.header{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\r\n\tposition: relative;\r\n\theight: 170px;\n}\n.room{\r\n\twidth: 404px;\n}\n.doctor{\r\n\twidth: 404px;\n}\n.seeing{\r\n\twidth: 506px;\n}\n.content {\r\n\tposition: relative;\r\n\theight: 100%;\n}\n.bg {\r\n\tposition: absolute;\r\n\theight: 1080px;\r\n\twidth: 1920px;\r\n\tz-index: -1;\n}\n.header-time {\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\tposition: absolute;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\r\n\t-webkit-box-orient: vertical;\r\n\t-webkit-box-direction: normal;\r\n\t-webkit-flex-direction: column;\r\n\t        flex-direction: column;\r\n\tright: 20px;\r\n\tpadding-top: 15px;\r\n\ttop: 33px;\n}\n.header-time uni-view {\r\n\twidth: 360px;\r\n\tfont-size: 37px;\r\n\tcolor: #000;\r\n\ttext-align: center;\r\n\tletter-spacing:2px;\n}\n.info{\r\n\tpadding-left: 55px;\r\n\tpadding-right: 55px;\n}\n.right-item{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-flex-wrap: wrap;\r\n\t        flex-wrap: wrap;\r\n\twidth: 1239px;\n}\n.info-patient.patient-left{\r\n\twidth: 585px;\n}\n.info-patient {\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\theight: 126px;\r\n\twidth: 654px;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\r\n\twhite-space: nowrap;\r\n\toverflow: hidden;\r\n\ttext-overflow: ellipsis;\n}\n.info-patient uni-view {\r\n\tfont-size: 64px;\r\n\tcolor: #fff;\r\n\ttext-align: center;\r\n\tletter-spacing: 4px;\n}\n.info-title{\r\n\tfont-size: 125px;\r\n    color: #fff;\r\n    height: 208px;\r\n\ttext-align: center;\r\n    line-height: 208px;\r\n    font-weight: bold;\r\n\tletter-spacing: 4px;\n}\n.popup-btn{\r\n\t\tfont-size: 30px;\r\n\t\tcolor: #fff;\r\n\t\tpadding-left: 40px;\r\n\t\tpadding-right: 40px;\r\n\t\tbackground-color: rgb(68,114,196);\r\n\t\tmargin-left: 40px;\r\n\t\tmargin-right: 40px;\n}\n.popup{\r\n\t\tbackground-color: #fff;\r\n\t\twidth: 600px;\r\n\t\tfont-size: 40px;\r\n\t\tz-index: 100;\n}\n.popup-header{\r\n\t\tbackground-color: rgb(68,114,196);\r\n\t\ttext-align: center;\r\n\t\tpadding: 10px 0 ;\n}\n.uni-form-item{\r\n\t\tdisplay: -webkit-box;\r\n\t\tdisplay: -webkit-flex;\r\n\t\tdisplay: flex;\r\n\t\t-webkit-box-align: center;\r\n\t\t-webkit-align-items: center;\r\n\t\t        align-items: center;\r\n\t\tpadding: 40px;\r\n\t\t-webkit-box-pack: center;\r\n\t\t-webkit-justify-content: center;\r\n\t\t        justify-content: center;\n}\n.popup-title{\r\n\t\tfont-size: 30px;\n}\n.uni-input{\r\n\t\tfont-size: 25px;\r\n\t\tborder: 1px solid;\r\n\t\tpadding: 20px 30px;\n}\r\n", ""]);
+exports.push([module.i, "\n.pr-15{\r\n\tpadding-right: 15px;\n}\n.pl-15{\r\n\tpadding-left: 15px;\n}\n.pt-15{\r\n\tpadding-top: 15px;\n}\nbody {\r\n\theight: 100%;\n}\n.info-bottom{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n    padding-top: 128px;\n}\n.info-number{\r\n\theight: 504px;\r\n\twidth: 574px;\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\n}\n.nubmer-circular{\r\n    height: 350px;\r\n    width: 350px;\r\n\tposition: relative;\r\n    border-radius: 300px;\r\n    border: 35px solid #fcff00;\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\n}\n.info-patient uni-view.yellow{\r\n\tcolor: #fcff00 !important;\r\n\tfont-size: 127px;\r\n\theight: 260px;\r\n\tline-height: 260px;\n}\n.number-text{\r\n\tfont-size: 332px;\r\n\tposition: absolute;\r\n\tcolor: #fcff00;\r\n\tfont-weight: bold;\n}\n.uni-form-item.uni-form-btn{\r\n\tpadding: 0;\n}\n.chooseBtn{\r\n\tfont-size: 30px;\r\n\twidth: 438px;\n}\n.header{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\r\n\tposition: relative;\r\n\theight: 170px;\n}\n.room{\r\n\twidth: 404px;\n}\n.doctor{\r\n\twidth: 404px;\n}\n.seeing{\r\n\twidth: 506px;\n}\n.content {\r\n\tposition: relative;\r\n\theight: 100%;\n}\n.bg {\r\n\tposition: absolute;\r\n\theight: 1080px;\r\n\twidth: 1920px;\r\n\tz-index: -1;\n}\n.header-time {\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\tposition: absolute;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\r\n\t-webkit-box-orient: vertical;\r\n\t-webkit-box-direction: normal;\r\n\t-webkit-flex-direction: column;\r\n\t        flex-direction: column;\r\n\tright: 20px;\r\n\tpadding-top: 15px;\r\n\ttop: 33px;\n}\n.header-time uni-view {\r\n\twidth: 360px;\r\n\tfont-size: 37px;\r\n\tcolor: #000;\r\n\ttext-align: center;\r\n\tletter-spacing:2px;\n}\n.info{\r\n\tpadding-left: 55px;\r\n\tpadding-right: 55px;\n}\n.info-right{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\n}\n.right-item{\r\n\tdisplay: -webkit-box;\r\n\tdisplay: -webkit-flex;\r\n\tdisplay: flex;\r\n\t-webkit-flex-wrap: wrap;\r\n\t        flex-wrap: wrap;\r\n\twidth: 1239px;\n}\n.info-patient.patient-left{\r\n\twidth: 585px;\n}\n.info-patient {\t\t\t\r\n\tdisplay: -webkit-box;\t\t\t\r\n\tdisplay: -webkit-flex;\t\t\t\r\n\tdisplay: flex;\r\n\twidth: 1236px;\r\n\t-webkit-box-pack: center;\r\n\t-webkit-justify-content: center;\r\n\t        justify-content: center;\r\n\t-webkit-box-align: center;\r\n\t-webkit-align-items: center;\r\n\t        align-items: center;\r\n\twhite-space: nowrap;\r\n\toverflow: hidden;\r\n\ttext-overflow: ellipsis;\n}\n.info-patient uni-view {\r\n\tfont-size: 81px;\r\n\tcolor: #fff;\r\n\ttext-align: center;\r\n\tletter-spacing: 4px;\r\n\tfont-weight: bold;\n}\n.info-title{\r\n\tfont-size: 125px;\r\n    color: #fff;\r\n    height: 208px;\r\n\ttext-align: center;\r\n    line-height: 208px;\r\n    font-weight: bold;\r\n\tletter-spacing: 4px;\n}\n.popup-btn{\r\n\t\tfont-size: 30px;\r\n\t\tcolor: #fff;\r\n\t\tpadding-left: 40px;\r\n\t\tpadding-right: 40px;\r\n\t\tbackground-color: rgb(68,114,196);\r\n\t\tmargin-left: 40px;\r\n\t\tmargin-right: 40px;\n}\n.popup{\r\n\t\tbackground-color: #fff;\r\n\t\twidth: 600px;\r\n\t\tfont-size: 40px;\r\n\t\tz-index: 100;\n}\n.popup-header{\r\n\t\tbackground-color: rgb(68,114,196);\r\n\t\ttext-align: center;\r\n\t\tpadding: 10px 0 ;\n}\n.uni-form-item{\r\n\t\tdisplay: -webkit-box;\r\n\t\tdisplay: -webkit-flex;\r\n\t\tdisplay: flex;\r\n\t\t-webkit-box-align: center;\r\n\t\t-webkit-align-items: center;\r\n\t\t        align-items: center;\r\n\t\tpadding: 40px;\r\n\t\t-webkit-box-pack: center;\r\n\t\t-webkit-justify-content: center;\r\n\t\t        justify-content: center;\n}\n.popup-title{\r\n\t\tfont-size: 30px;\n}\n.radio-group{\r\n\t\tdisplay: -webkit-box;\r\n\t\tdisplay: -webkit-flex;\r\n\t\tdisplay: flex;\n}\n.radio{\r\n\t\t-webkit-transform:scale(2);\r\n\t\t        transform:scale(2);\r\n\t\twidth: 48px;\r\n\t\theight: 48px;\r\n\t\tmargin-right: 30px;\r\n\t\tdisplay: -webkit-box;\r\n\t\tdisplay: -webkit-flex;\r\n\t\tdisplay: flex;\r\n\t\t-webkit-box-pack: center;\r\n\t\t-webkit-justify-content: center;\r\n\t\t        justify-content: center;\r\n\t\tmargin-left: 15px;\r\n\t\tmargin-right: 4px;\n}\n.uni-list-cell{\r\n\t\tdisplay: -webkit-box;\r\n\t\tdisplay: -webkit-flex;\r\n\t\tdisplay: flex;\r\n\t\t-webkit-box-align: center;\r\n\t\t-webkit-align-items: center;\r\n\t\t        align-items: center;\n}\n.uni-input{\r\n\t\tfont-size: 25px;\r\n\t\tborder: 1px solid;\r\n\t\tpadding: 20px 30px;\n}\r\n", ""]);
 // Exports
 module.exports = exports;
 

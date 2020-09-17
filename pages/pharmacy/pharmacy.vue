@@ -42,8 +42,32 @@
 						<input class="uni-input" v-model="iType"  placeholder="请输入窗口" />
 					</view>
 					<view class="uni-form-item uni-form-btn">
+						<view class="popup-title">声音：</view>
+						<radio-group @change="radioChange" class="radio-group">
+							<label class="uni-list-cell uni-list-cell-pd">
+							    <view>
+							        <radio class="radio" value="0"  :checked="playSound==0"/>
+							    </view>
+							    <view class="popup-title">无</view>
+							</label>
+						    <label class="uni-list-cell uni-list-cell-pd">
+						        <view>
+						            <radio class="radio" value="1" :checked="playSound==1" />
+						        </view>
+						        <view class="popup-title">单屏</view>
+						    </label>
+							<label class="uni-list-cell uni-list-cell-pd">
+							    <view>
+							        <radio class="radio" value="2" :checked="playSound==2" />
+							    </view>
+							    <view class="popup-title">全播</view>
+							</label>
+						</radio-group>
+					</view>
+					<view class="uni-form-item ">
 						<button type="default" class="chooseBtn" @click="navTo()">选择页面</button>
 					</view>
+					
 					<view class="uni-form-item " >
 						<button class="popup-btn" @click="close">取消</button>
 						<button class="popup-btn" @click="confirm">确定</button>
@@ -63,6 +87,7 @@ import uniPopup from '@/components/uni-popup/uni-popup.vue'
 export default {
 	data() {
 		return {
+			playSound:0,
 			dateText: {
 				year: '',
 				month: '',
@@ -103,8 +128,11 @@ export default {
 			playName:'',
 		};
 	},
-	onLoad() {
+	async onLoad() {
+		this.playSound = uni.getStorageSync('playSound') || 0;
 		this.iType = uni.getStorageSync('iType')||'';
+		await this.connect();
+		this.send('连接');
 		let date = new Date();
 		this.weekday = new Array(7);
 		this.weekday[0] = '星期日';
@@ -114,9 +142,8 @@ export default {
 		this.weekday[4] = '星期四';
 		this.weekday[5] = '星期五';
 		this.weekday[6] = '星期六';
-		if(this.iType){
-			this.init();
-		}
+		
+		
 	},
 	methods: {
 		//选择页面
@@ -169,6 +196,9 @@ export default {
 			this.popupShow = false;
 			this.data = [];
 			this.init();
+			if(this.playSound==2){
+				this.playAll();
+			}
 			this.$refs.popup.close();
 			uni.hideLoading();
 		},
@@ -178,19 +208,101 @@ export default {
 				return false;
 			}
 			// 测试使用
-			let datas = [{"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三三三","age":"111","lay_queue_type":"A002","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"101","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},{"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"王五","age":"111","lay_queue_type":"A001","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10002","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"王五","Replay":true, "call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}];
+			// let datas = [
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"王五","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10002","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10003","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
+			// ]
 			// if(this.testNubmer>=2){
 			// 	datas[2].Replay = false;
 			// }
 			// let datas = [];
 			// datas[0].serial_no = datas[0].serial_no + this.testNubmer++;
-		
+			
+			
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
 				data:{
 					counter_no :this.iType ,
 				},
 				timeout:3000,
+			    success: (res) => {
+					let datas = res.data.Data;
+					let dataMaps = [];
+					let voiceDataInit = [];
+					if(this.playSound==1){
+						this.voiceData = [];
+					}
+					if(datas.length>3){
+						datas.slice(0,3);
+					}
+					datas.forEach((data,index) =>{
+						let name =data.sick_name?this.hideName(data.sick_name):'';
+						let dataMap = {
+							number:data.serial_no,
+							name:name,
+						}
+						dataMaps = dataMaps.concat(dataMap);
+						if(name && this.playSound==1){
+							let number = this.chineseNumeral(dataMap.number+'');
+							let speakText = `请,${number}号,${data.sick_name},到,${data.counter_name},取药?${data.counter_no}`;
+							if(this.data.length==0){
+								this.voiceData.push(speakText);
+								this.voiceDataInit.push(speakText);
+							}else if (data.Replay==true){
+								this.voiceData.push(speakText);
+								voiceDataInit = voiceDataInit.concat(speakText);
+							}
+							else{
+								voiceDataInit = voiceDataInit.concat(speakText);
+							}
+						}
+					})
+					
+					if(voiceDataInit.length>0 && this.playSound==1){
+						let voiceData = this.findDifferentElements(voiceDataInit,this.voiceDataInit); 
+						this.voiceData = this.voiceData.concat(voiceData)
+						this.voiceDataInit = voiceDataInit;
+					}
+					this.data = dataMaps;
+					if(this.voiceData.length>0 && this.playSound==1){
+						this.voiceQueue();	
+					}else{
+						setTimeout(() => {
+							this.init()
+						}, 5000);
+					}	
+			    },
+				fail:(res) => {
+					uni.showToast({
+						title:'请求失败',
+						icon:'none'
+					})
+					setTimeout(() => {
+						this.init()
+					}, 5000);
+				}
+			});
+		},
+		//统一叫号 全播
+		playAll(){
+			// 测试使用
+			// let datas = [
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"队列代码","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"王五","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10002","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"队列代码","counter_no":"ck2","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10003","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"}
+			// ]
+			;
+			// if(this.testNubmer>=2){
+			// 	datas[2].Replay = false;
+			// }
+			// let datas = [];
+			// datas[0].serial_no = datas[0].serial_no + this.testNubmer++;
+			
+			
+			uni.request({
+				url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
+				timeout:30000,
 			    success: (res) => {
 					let datas = res.data.Data;
 					let dataMaps = [];
@@ -208,7 +320,7 @@ export default {
 						dataMaps = dataMaps.concat(dataMap);
 						if(name){
 							let number = this.chineseNumeral(dataMap.number+'');
-							let speakText = `请,${number}号,${data.sick_name},到,${data.counter_name},取药 `;
+							let speakText = `请,${number}号,${data.sick_name},到,${data.counter_name},取药?${data.counter_no}`;
 							if(this.data.length==0){
 								this.voiceData.push(speakText);
 								this.voiceDataInit.push(speakText);
@@ -222,17 +334,16 @@ export default {
 						}
 					})
 					
-					if(voiceDataInit.length>0 ){
+					if(voiceDataInit.length){
 						let voiceData = this.findDifferentElements(voiceDataInit,this.voiceDataInit); 
 						this.voiceData = this.voiceData.concat(voiceData)
 						this.voiceDataInit = voiceDataInit;
 					}
-					this.data = dataMaps;
 					if(this.voiceData.length>0){
 						this.voiceQueue();	
 					}else{
 						setTimeout(() => {
-							this.init()
+							this.playAll()
 						}, 5000);
 					}
 			    },
@@ -242,7 +353,7 @@ export default {
 						icon:'none'
 					})
 					setTimeout(() => {
-						this.init()
+						this.playAll()
 					}, 5000);
 				}
 			});
@@ -252,17 +363,24 @@ export default {
 			return  array1.filter(function(v){ return array2.indexOf(v) == -1 });
 		},
 		// 语音队列
-		voiceQueue(){
+		async voiceQueue(){
+			let text = this.voiceData[0].split('?')[0];
 			// #ifdef APP-PLUS
 				FvvUniTTS.init((callback) => {
 					FvvUniTTS.speak({
-						text:this.voiceData[0]
+						text:text
 					});
 				});
 			// #endif
 			//当前叫号姓名
-			if(this.voicePlayNumber==0){
-				this.playName =this.hideName(this.voiceData[0].split(',')[2]);
+			if(this.voicePlayNumber==0 && this.playSound==2){
+				let data = {
+					name:this.voiceData[0].split(',')[2],
+					counter_no:this.voiceData[0].split('?')[1]
+				}
+				await this.send(JSON.stringify(data));
+			}else if(this.voicePlayNumber==0 && this.playSound==1){
+				this.playName = this.hideName(this.voiceData[0].split(',')[2]);
 			}
 			if(this.voiceData.length>1){
 				this.onDone(this.voiceData[1]);
@@ -270,11 +388,18 @@ export default {
 				if(this.voicePlayNumber<3){
 					this.onDone(this.voiceData[0]);
 				}else{	
-					setTimeout(() => {
-						this.init()
-					}, 5000);
+					if(this.playSound==1){
+						this.init();
+					}else{
+						this.playAll();
+					}
 				}
 			}
+		},
+		//声音设置
+		radioChange(evt) {
+			this.playSound = +evt.target.value;
+			uni.setStorageSync('playSound', this.playSound);
 		},
 		// 播放完执行
 		onDone(data){
@@ -291,7 +416,11 @@ export default {
 				if(this.voiceData.length>0){
 					this.voiceQueue()
 				}else{
-					this.init()
+					if(this.playSound==1){
+						this.init();
+					}else{
+						this.playAll();
+					}
 				}
 			}, date);
 			
@@ -324,7 +453,80 @@ export default {
 				name = name.slice(0,1) + '*' + name.slice(2,name.length)
 			}
 			return name;
-		}
+		},
+		
+		//webSocket连接
+		connect() {
+			uni.showLoading({
+				title: '连接中...'
+			})
+			uni.connectSocket({
+				// url: 'ws://192.168.0.167:8080/webSocket/'+this.iType,
+				url: 'ws://172.31.12.188:8080/webSocket/'+this.iType,
+				// #ifdef MP
+				header: {
+					'content-type': 'application/json'
+				},
+				// #endif
+				// #ifdef MP-WEIXIN
+				method: 'GET',
+				// #endif
+				success(res) {
+					// 这里是接口调用成功的回调，不是连接成功的回调，请注意
+				},
+				fail(err) {
+					// 这里是接口调用失败的回调，不是连接失败的回调，请注意
+				}
+			})
+			uni.onSocketOpen((res) => {
+				uni.hideLoading()
+				uni.showToast({
+					icon: 'none',
+					title: '连接成功'
+				})
+				if(this.iType){
+					this.init()
+				}
+				if(this.playSound==2){
+					this.playAll();
+				}
+			})
+			uni.onSocketError((err) => {
+				uni.hideLoading()
+				uni.showModal({
+					content: '连接失败，可能是websocket服务不可用，请稍后再试',
+					showCancel: false
+				})
+			})
+			uni.onSocketMessage((res) => {
+				if(res.data=='欢迎1加入连接！'){
+					return
+				}
+				try{
+					res.data = JSON.parse(res.data);
+					let counter_no = parseInt(res.data.counter_no.split('ck')[1]);
+					console.log(counter_no+this.iType);
+					if(counter_no==this.iType){
+						this.playName =this.hideName(res.data.name);
+					}
+				}catch(e){
+					//TODO handle the exception
+				}
+			})
+			uni.onSocketClose((res) => {
+			})
+		},
+		//发送webSocket
+		send(data) {
+			uni.sendSocketMessage({
+				data: data,
+				success(res) {
+				},
+				fail(err) {
+				}
+			})
+		},
+		
 	}
 };
 </script>
@@ -497,6 +699,23 @@ page {
 	}
 	.popup-title{
 		font-size: 30px;
+	}
+	.radio-group{
+		display: flex;
+	}
+	.radio{
+		transform:scale(2);
+		width: 48px;
+		height: 48px;
+		margin-right: 30px;
+		display: flex;
+		justify-content: center;
+		margin-left: 15px;
+		margin-right: 4px;
+	}
+	.uni-list-cell{
+		display: flex;
+		align-items: center;
 	}
 	.uni-input{
 		font-size: 25px;
