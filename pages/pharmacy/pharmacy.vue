@@ -24,8 +24,8 @@
 				<view class="info-right">
 					<view class="right-item">
 						<view class="info-patient" v-for="(item,index) in data" :key="index">
-							<view class="pr-15" :class="item.name==playName?'yellow':''">{{item.number}}</view>
-							<view class="pl-15" :class="item.name==playName?'yellow':''">{{item.name}}</view>
+							<view class="pr-15" :class="item.capitalNumber==playName?'yellow':''">{{item.number}}</view>
+							<view class="pl-15" :class="item.capitalNumber==playName?'yellow':''">{{item.name}}</view>
 						</view>
 					</view>
 				</view>
@@ -125,7 +125,7 @@ export default {
 			voicePlayNumber:0,
 			voiceDataInit:[],
 			voiceData:[],
-			playName:'',
+			playName:'一',
 		};
 	},
 	async onLoad() {
@@ -212,14 +212,14 @@ export default {
 			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"12345","sick_name":"张三1","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10001","pres_count":"100","lay_time":"20200606","call_flag":"1","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
 			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"王五","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10002","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
 			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10003","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
+			// {"queue_date":"20200606","storage_code":"药房代码","sick_id":"123","sick_name":"李四","age":"111","lay_queue_type":"队列代码","counter_no":"ck1","counter_name":"窗口2","cost":"1000000","addon_cost":"10000","serial_no":"10003","pres_count":"100","lay_time":"20200606","call_flag":"0","call_operator":"李四","call_time":"20020202","take_operator":"傻逼","tack_time":"19520102","calling_now_flag":"aaa","lay_queue_name":"127.0.0.1","prior_flag":"aaa"},
 			// ]
 			// if(this.testNubmer>=2){
 			// 	datas[2].Replay = false;
 			// }
 			// let datas = [];
 			// datas[0].serial_no = datas[0].serial_no + this.testNubmer++;
-			
-			
+		
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_dosage_Queue', 
 				data:{
@@ -233,18 +233,20 @@ export default {
 					if(this.playSound==1){
 						this.voiceData = [];
 					}
-					if(datas.length>3){
-						datas.slice(0,3);
+					if(datas.length>=3){
+						datas = datas.slice(0,3);
 					}
 					datas.forEach((data,index) =>{
 						let name =data.sick_name?this.hideName(data.sick_name):'';
 						let dataMap = {
 							number:data.serial_no,
 							name:name,
+							capitalNumber:'',
 						}
 						dataMaps = dataMaps.concat(dataMap);
 						if(name && this.playSound==1){
 							let number = this.chineseNumeral(dataMap.number+'');
+							dataMap.capitalNumber = number+'号';
 							let speakText = `请,${number}号,${data.sick_name},到,${data.counter_name},取药?${data.counter_no}`;
 							if(this.data.length==0){
 								this.voiceData.push(speakText);
@@ -308,18 +310,20 @@ export default {
 					let dataMaps = [];
 					let voiceDataInit = [];
 					this.voiceData = [];
-					if(datas.length>3){
-						datas.slice(0,3);
+					if(datas.length>=3){
+						datas = datas.slice(0,3);
 					}
 					datas.forEach((data,index) =>{
 						let name =data.sick_name?this.hideName(data.sick_name):'';
 						let dataMap = {
 							number:data.serial_no,
 							name:name,
+							capitalNumber:'',
 						}
 						dataMaps = dataMaps.concat(dataMap);
 						if(name){
 							let number = this.chineseNumeral(dataMap.number+'');
+							dataMap.capitalNumber = number+'号';
 							let speakText = `请,${number}号,${data.sick_name},到,${data.counter_name},取药?${data.counter_no}`;
 							if(this.data.length==0){
 								this.voiceData.push(speakText);
@@ -375,13 +379,14 @@ export default {
 			//当前叫号姓名
 			if(this.voicePlayNumber==0 && this.playSound==2){
 				let data = {
-					name:this.voiceData[0].split(',')[2],
+					name:this.voiceData[0].split(',')[1],
 					counter_no:this.voiceData[0].split('?')[1]
 				}
 				await this.send(JSON.stringify(data));
 			}else if(this.voicePlayNumber==0 && this.playSound==1){
-				this.playName = this.hideName(this.voiceData[0].split(',')[2]);
+				this.playName = this.voiceData[0].split(',')[1];
 			}
+			console.log(this.playName);
 			if(this.voiceData.length>1){
 				this.onDone(this.voiceData[1]);
 			}else{
@@ -493,9 +498,9 @@ export default {
 			})
 			uni.onSocketError((err) => {
 				uni.hideLoading()
-				uni.showModal({
-					content: '连接失败，可能是websocket服务不可用，请稍后再试',
-					showCancel: false
+				uni.showToast({
+					icon: 'none',
+					title: '连接失败'
 				})
 			})
 			uni.onSocketMessage((res) => {
@@ -507,7 +512,7 @@ export default {
 					let counter_no = parseInt(res.data.counter_no.split('ck')[1]);
 					console.log(counter_no+this.iType);
 					if(counter_no==this.iType){
-						this.playName =this.hideName(res.data.name);
+						this.playName = res.data.name;
 					}
 				}catch(e){
 					//TODO handle the exception
