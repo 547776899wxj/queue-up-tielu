@@ -90,6 +90,7 @@ export default {
 			voiceData:[],
 			voiceDataInit:[],
 			voicePlayNumber:0,
+		
 		};
 	},
 	onLoad() {
@@ -110,6 +111,7 @@ export default {
 		}
 	},
 	methods: {
+		
 		//选择页面
 		navTo(){
 			uni.setStorageSync('pageSetBoolean',false);
@@ -203,7 +205,7 @@ export default {
 							nextName:nextName,
 						}
 						dataMaps = dataMaps.concat(dataMap);
-					
+						
 						if(name && data.status == '呼叫'){
 							let number = this.chineseNumeral(dataMap.number+'');
 							let speakText = `请,${number}号,${data.patient_name},到,${dataMap.room},就诊`;

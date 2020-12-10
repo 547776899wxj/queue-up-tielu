@@ -14,7 +14,7 @@
 			</view>
 		</view>
 		<view class="info">
-			<view class="info-patient" v-for="(item,index) in data" :key="index">
+			<view class="info-patient" v-for="(item,index) in pageData" :key="index">
 				<view class="room">{{item.room}}</view>
 				<view class="remark">{{item.remark}}</view>
 				<view class="doctor">{{item.doctor}}</view>
@@ -83,6 +83,9 @@ export default {
 			voiceData:[],
 			voiceDataInit:[],
 			voicePlayNumber:0,
+			pageData:[],
+			pageNumber:1,
+			pageNewNumber:1,
 		};
 	},
 	onLoad() {
@@ -109,6 +112,28 @@ export default {
 		}
 	},
 	methods: {
+		// 翻页
+		page(){
+			if(this.pageNumber>this.pageNewNumber){
+				setTimeout(() => {
+					this.pageData = this.data.slice(this.pageNewNumber*7,(this.pageNewNumber*7)+7);
+					this.pageNewNumber++;
+					this.page();
+				}, 10000);
+			}
+			else if(this.voiceData.length==0){
+				setTimeout(() => {
+					this.init();
+				}, 10000);
+			}
+			else{
+				setTimeout(() => {
+					this.pageNewNumber = 1;
+					this.pageData = this.data.slice(0,7);
+					this.page();
+				}, 10000);
+			}
+		},
 		//选择页面
 		navTo(){
 			uni.setStorageSync('pageSetBoolean',false);
@@ -164,12 +189,11 @@ export default {
 				return false;
 			}
 			// 测试使用
-			// let datas = [{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}]
+			// let datas = [{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良2清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室5","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建贞","employe_no":"d181","doctor_seq":"1","current_call_time":"2020-08-27 15:02:42","am_pm":"下午","patient_id":"0000031498","patient_name":"杨忠","status":"排队","seq_number":"53934","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":null,"staff_no":"134"},{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室7","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"6","current_call_time":"2020-08-27 16:02:42","am_pm":"下午","patient_id":"0000113877","patient_name":"魏良清","status":"呼叫","seq_number":"52975","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}]
 			// datas[0].doctor_seq = datas[0].doctor_seq + this.testNubmer++
 			// let datas = []
 			// let dataMaps = [];
 			// let voiceDataInit = [];
-			
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_disp_Queue', 
 				data:{
@@ -216,7 +240,11 @@ export default {
 						this.voiceDataInit = voiceDataInit;
 					}
 					this.data = dataMaps;
-					console.log(this.data);
+					this.pageData = this.data.slice(0,7);
+					this.pageNumber = Math.ceil(dataMaps/7);
+					if(this.data.length>7){
+						this.page();
+					}
 					if(this.voiceData.length>0){
 						this.voiceQueue();	
 					}else{
@@ -245,18 +273,12 @@ export default {
 					});
 				});
 			// #endif
-			
 			console.log(this.voiceData[0]);
-			
 			if(this.voiceData.length>1){
 				this.onDone(this.voiceData[1]);
 			}else{
 				if(this.voicePlayNumber<3){
 					this.onDone(this.voiceData[0]);
-				}else{	
-					setTimeout(() => {
-						this.init()
-					}, 5000);
 				}
 			}
 		},
@@ -268,15 +290,12 @@ export default {
 			}
 			setTimeout(() => {
 				this.voicePlayNumber++;
-				console.log(this.voicePlayNumber);
 				if(this.voicePlayNumber>=3){
 					this.voiceData.shift();
 					this.voicePlayNumber = 0;
 				}
 				if(this.voiceData.length>0){
 					this.voiceQueue()
-				}else{
-					this.init()
 				}
 			}, date);
 			

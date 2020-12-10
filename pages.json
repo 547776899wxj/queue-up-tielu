@@ -36,6 +36,10 @@
 				}
 			}
 		}
+        ,{
+            "path" : "pages/pharmacy/test",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
