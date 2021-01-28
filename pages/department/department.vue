@@ -171,10 +171,9 @@ export default {
 				return false;
 			}
 			// 测试使用
-			// let datas = [{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"23","current_call_time":null,"am_pm":"下午","patient_id":"0000004818","patient_name":"林先进","status":"叫号","seq_number":"51909","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"51927","next_name":"黄玉栋"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"21","current_call_time":null,"am_pm":"下午","patient_id":"0000015241","patient_name":"黄玉栋","status":"排队","seq_number":"51927","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52065","next_name":"马仲君"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"6","current_call_time":null,"am_pm":"下午","patient_id":"0000002364","patient_name":"马仲君","status":"作废","seq_number":"52065","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52072","next_name":"张木铨"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"4","current_call_time":null,"am_pm":"下午","patient_id":"0000018489","patient_name":"张木铨","status":"排队","seq_number":"52072","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52097","next_name":"王天赐"}]
+			// let datas = [{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"23","current_call_time":null,"am_pm":"下午","patient_id":"0000004818","patient_name":"林先进","status":"呼叫","seq_number":"51909","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"51927","next_name":"黄玉栋"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"21","current_call_time":null,"am_pm":"下午","patient_id":"0000015241","patient_name":"黄玉栋","status":"排队","seq_number":"51927","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52065","next_name":"马仲君"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"6","current_call_time":null,"am_pm":"下午","patient_id":"0000002364","patient_name":"马仲君","status":"作废","seq_number":"52065","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52072","next_name":"张木铨"},{"queue_name":"信息科","dept_code":"30101","clinique_code":"诊室1","dept_name":"内科门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"张媛","employe_no":"d201","doctor_seq":"4","current_call_time":null,"am_pm":"下午","patient_id":"0000018489","patient_name":"张木铨","status":"排队","seq_number":"52072","work_host":"172.31.9.101","calling_now_flag":null,"pre_status":"1","staff_no":"270","next_no":"52097","next_name":"王天赐"}]
 			// datas[0].doctor_seq = datas[0].doctor_seq + this.testNubmer++
 			// datas[1].doctor_seq = datas[1].doctor_seq + this.testNubmer++
-			
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_disp_Queue', 
 				data:{
@@ -254,9 +253,8 @@ export default {
 			if(this.voiceData.length>1){
 				this.onDone(this.voiceData[1]);
 			}else{
-				setTimeout(() => {
-					this.init()
-				}, 5000);
+				console.log('voicePlayNumber'+this.voicePlayNumber);
+				this.onDone(this.voiceData[0]);
 			}
 		},
 		// 播放完执行
@@ -266,9 +264,15 @@ export default {
 				date = date + ((data.length - 12)*300 ) 
 			}
 			setTimeout(() => {
-				this.voiceData.shift();
+				this.voicePlayNumber++;
+				if(this.voicePlayNumber>=3){
+					this.voiceData.shift();
+					this.voicePlayNumber = 0;
+				}
 				if(this.voiceData.length>0){
 					this.voiceQueue()
+				}else{
+					this.init();
 				}
 			}, date);
 			
