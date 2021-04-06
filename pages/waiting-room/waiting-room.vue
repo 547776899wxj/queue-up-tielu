@@ -197,7 +197,8 @@ export default {
 				return false;
 			}
 			// 测试使用
-			// let datas = [{"queue_name":"口腔门诊(大厅)","replay":true,"dept_code":"31501","clinique_code":"科室1","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}
+			// let datas = [
+			// 	{"queue_name": "测试","dept_code": "31501","clinique_code": "诊室1","dept_name": "科室名","queue_time": "2021-03-08 00:00:00","tech_title": "医生1","doctor": "医生1","employe_no": "d052","doctor_seq": "2","current_call_time": "2021-03-08 15:44:01","am_pm": "涓嬪崍","patient_id": "0000008440","patient_name": "1","status": "呼叫","seq_number": "65933","work_host": "172.31.12.73","calling_now_flag": "1","pre_status": null,"staff_no": "132","next_no": null,"next_name": null,"call_count": "1","replay": false}, {"queue_name": "测试","dept_code": "31501","clinique_code": "诊室7","dept_name": "科室名","queue_time": "2021-03-08 00:00:00","tech_title": "医生","doctor": "医生2","employe_no": "d009","doctor_seq": "1","current_call_time": "2021-03-08 14:40:34","am_pm": "涓嬪崍","patient_id": "0000011437","patient_name": "2","status": "呼叫","seq_number": "65928","work_host": "172.31.12.73","calling_now_flag": "1","pre_status": null,"staff_no": "129","next_no": null,"next_name": null,"call_count": "3","replay": false}, {"queue_name": "测试","dept_code": "31501","clinique_code": "诊室7","dept_name": "科室名","queue_time": "2021-03-08 00:00:00","tech_title": "医生","doctor": "医生2","employe_no": "d009","doctor_seq": "2","current_call_time": "2021-03-08 15:50:59","am_pm": "涓嬪崍","patient_id": "0000050499","patient_name": "3","status": "呼叫","seq_number": "65934","work_host": "172.31.12.73","calling_now_flag": null,"pre_status": null,"staff_no": "129","next_no": null,"next_name": null,"call_count": "0","replay": false}
 			// ,{"queue_name":"口腔门诊(大厅)","replay":false,"dept_code":"31501","clinique_code":"科室2","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}
 			// ,{"queue_name":"口腔门诊(大厅)","replay":false,"dept_code":"31501","clinique_code":"科室3","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}
 			// ,{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室4","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}
@@ -212,6 +213,7 @@ export default {
 			// ,{"queue_name":"口腔门诊(大厅)","dept_code":"31501","clinique_code":"科室13","dept_name":"口腔门诊","queue_time":"27-8月 -20","tech_title":"主治医师","doctor":"林建树","employe_no":"d009","doctor_seq":"1","current_call_time":"2020-08-27 14:02:42","am_pm":"下午","patient_id":"0000016436","patient_name":"周凤","status":"呼叫","seq_number":"52139","work_host":"172.31.12.73","calling_now_flag":null,"pre_status":"1","staff_no":"129"}
 			// ]
 			// datas[0].doctor_seq = datas[0].doctor_seq + this.testNubmer++
+	
 			
 			uni.request({
 			    url: 'http://172.31.12.188:8080/Queue/Get_disp_Queue', 
@@ -296,7 +298,11 @@ export default {
 		// 语音队列
 		voiceQueue(){
 			// #ifdef APP-PLUS
-				FvvUniTTS.init((callback) => { });
+				FvvUniTTS.init((callback) => { 
+					FvvUniTTS.speak({
+						text:this.voiceData[0]
+					});
+				});
 			// #endif
 			console.log(this.voiceData[0]);
 			if(this.voiceData.length>1){
